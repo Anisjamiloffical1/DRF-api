@@ -28,7 +28,7 @@ def StudentsView(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # this use for api to get single student data in json format
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 def studentDetailView(request, pk):
     try:
         student = Student.objects.get(pk=pk)
@@ -38,4 +38,13 @@ def studentDetailView(request, pk):
     if request.method == 'GET':
         seriliazer = StudentSerializers(student)
         return Response(seriliazer.data, status=status.HTTP_200_OK)
+# this use for api update single student data in json format
+    
+    elif request.method == 'PUT':
+        seriliazer = StudentSerializers(student, data=request.data)
+        if seriliazer.is_valid():
+            seriliazer.save()
+            return Response(seriliazer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(seriliazer.errors, status=status.HTTP_400_BAD_REQUEST)
 
