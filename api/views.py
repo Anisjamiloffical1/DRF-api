@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from students.models import Student
-from .serializers import StudentSerializers
+from .serializers import StudentSerializers, EmployeeSerializers
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from employees.models import Employee
 # Create your views here.
 # this use for api to get all students data in json format manual this not recommended for large data use django rest framework
 
@@ -28,7 +30,7 @@ def StudentsView(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 # this use for api to get single student data in json format
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def studentDetailView(request, pk):
     try:
         student = Student.objects.get(pk=pk)
@@ -47,4 +49,20 @@ def studentDetailView(request, pk):
             return Response(seriliazer.data, status=status.HTTP_200_OK)
         else:
             return Response(seriliazer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
 
+    elif request.method == 'DELETE':
+        student.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# this class use for api to get all students data in json format using class based views
+
+# The class view automatically maps HTTP methods to class methods like get(), post(), put(), delete(), etc.
+class Employees(APIView):
+    # member function to handle GET request
+    def get(self, request):
+        employees = Employee.objects.all()
+        # this is use to serialize multiple objects
+        serializers = EmployeeSerializers(employees, many=True)
+        return Response(serializers.data, status=status.HTTP_200_OK)
