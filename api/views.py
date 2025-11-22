@@ -106,7 +106,7 @@ def studentDetailView(request, pk):
 
 
 # using mixins and generics class based views for employee api
-
+"""
 class Employees(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializers
@@ -127,5 +127,19 @@ class EmployeeDetails(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.D
     def put(self, request, pk):
         return self.update(request, pk)
     # this use for delete single employee details api
-    def delete(self, request, pk):
+    def delete(self, request, pk):  
         return self.destroy(request, pk)
+        """
+
+# using generics class based views for employee api
+
+class Employees(generics.ListCreateAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializers
+
+
+# this use for single employee details api\
+class EmployeeDetails(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializers
+    lookup_field = 'pk'
