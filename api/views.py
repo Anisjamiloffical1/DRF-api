@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from students.models import Student
 from .serializers import StudentSerializers, EmployeeSerializers
@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from employees.models import Employee
 from django.http import Http404
-from rest_framework import mixins, generics
+from rest_framework import mixins, generics, viewsets
 # Create your views here.
 # this use for api to get all students data in json format manual this not recommended for large data use django rest framework
 
@@ -132,7 +132,7 @@ class EmployeeDetails(mixins.RetrieveModelMixin,mixins.UpdateModelMixin,mixins.D
         """
 
 # using generics class based views for employee api
-
+"""
 class Employees(generics.ListCreateAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializers
@@ -143,3 +143,43 @@ class EmployeeDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializers
     lookup_field = 'pk'
+
+"""
+# class EmployeeViewSet(viewsets.ViewSet):
+#     def list(self, request):
+#         employees = Employee.objects.all()
+#         serialiazers = EmployeeSerializers(employees, many=True)# many is used to serialize multiple objects
+#         return Response(serialiazers.data)
+    
+#     def create(self, request):
+#         serializers = EmployeeSerializers(data=request.data)
+#         if serializers.is_valid():
+#             serializers.save()
+#             return Response(serializers.data, status=status.HTTP_201_CREATED)
+#         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# # this use for single employee details api
+#     def retrieve(self, request, pk=None):
+#         employee = get_object_or_404(Employee, pk=pk)
+#         serlializers = EmployeeSerializers(employee)
+#         return Response(serlializers.data, status=status.HTTP_200_OK)
+    
+#     def update(self, request, pk=None):
+#         employee = get_object_or_404(Employee, pk=pk)
+#         serializers = EmployeeSerializers(employee, data=request.data)
+#         if serializers.is_valid():
+#             serializers.save()
+#             return Response(serializers.data, status=status.HTTP_200_OK)
+#         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+#     def delete(self, request, pk=None):
+#         employee = get_object_or_404(Employee, pk=pk)
+#         employee.delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+# this use for employee api using ModelViewSet
+class EmployeeViewSet(viewsets.ModelViewSet):
+    
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializers
