@@ -9,6 +9,8 @@ from rest_framework.views import APIView
 from employees.models import Employee
 from django.http import Http404
 from rest_framework import mixins, generics, viewsets
+from blogs.models import Blog, Comment
+from blogs.serializers import BlogSerializer, CommentSerializer
 # Create your views here.
 # this use for api to get all students data in json format manual this not recommended for large data use django rest framework
 
@@ -183,3 +185,15 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializers
+
+
+# this use for blog api
+class BlogView(generics.ListCreateAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+
+
+# this use for comment api
+class CommentView(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
